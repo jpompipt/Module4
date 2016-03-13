@@ -83,7 +83,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 showLoading("#main-content");
 $ajaxUtils.sendGetRequest(
   allCategoriesUrl, 
-  [...], // ***** <---- TODO: STEP 1: Substitute [...] ******
+  buildAndShowHomeHTML);
+  }, // ***** <---- TODO: STEP 1: Substitute [...] ******
   true); // Explicitely setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
@@ -97,11 +98,24 @@ function buildAndShowHomeHTML (categories) {
   $ajaxUtils.sendGetRequest(
     homeHtmlUrl,
     function (homeHtml) {
+      //
+      $ajaxUtils.sendGetRequest(
+        categoryHtml,
+        // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
+        // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
+        // variable's name implies it expects.
+        // var chosenCategoryShortName = ....
+        function (categoryHtml) {
+          switchMenuToActive();
 
-      // TODO: STEP 2: Here, call chooseRandomCategory, passing it retrieved 'categories'
-      // Pay attention to what type of data that function returns vs what the chosenCategoryShortName
-      // variable's name implies it expects.
-      // var chosenCategoryShortName = ....
+          var chosenCategoryShortName = chooseRandomCategory(categories).short_name;
+
+          var html = categoryHtml;
+          var homeHtmlToInsertIntoMainPage = chosenCategoryShortName;
+          html = insertProperty(html, "short_name", homeHtmlToInsertIntoMainPage);
+          insertHtml("#main-content", html);
+        },
+        false); 
       
 
       // TODO: STEP 3: Substitute {{randomCategoryShortName}} in the home html snippet with the
